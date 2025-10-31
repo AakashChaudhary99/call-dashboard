@@ -1,11 +1,10 @@
 import HighchartsReact from 'highcharts-react-official';
-import React, { useState } from 'react'
 import Highcharts from "highcharts";
 
 type SadData = Record<string, number>
 const SadPathAnalysis = () => {
 
-    const [data, setData] = useState<SadData>({
+    const data:SadData = {
         "Verbal Agresion": 10,
         "Customer Hospitality": 5,
         "Assistant did not speak French": 2,
@@ -15,7 +14,7 @@ const SadPathAnalysis = () => {
         "Caller Identification": 9,
         "Incorrect caller identity": 10
 
-    })
+    }
 
     const pieData = Object.entries(data).map(([name, value]) => ({
         name,
