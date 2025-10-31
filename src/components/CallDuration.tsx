@@ -29,56 +29,60 @@ const CallDuration = () => {
     };
 
     const handleSave = async () => {
-        if (!email) {
-            alert("Please enter your email!");
-            return;
-        }
-
-        const { data: existing, error } = await supabase
-            .from("call_durations")
-            .select("data")
-            .eq("email", email)
-            .single();
-
-        if (error) {
-            console.error("Error checking existing data:", error);
-            return
-        }
-
-        if (existing) {
-            const confirmUpdate = confirm(
-                `You already have saved data:\n${JSON.stringify(existing.data, null, 2)}\n\nDo you want to overwrite it?`
-            );
-            if (!confirmUpdate) {
-                setShowEmailPrompt(false);
+        try {
+            if (!email) {
+                alert("Please enter your email!");
                 return;
             }
 
-            const { error: updateError } = await supabase
+            const { data: existing, error } = await supabase
                 .from("call_durations")
-                .update({ data: tempData, updated_at: new Date() })
-                .eq("email", email);
+                .select("data")
+                .eq("email", email)
+                .single();
 
-            if (updateError) {
-                console.error("Error updating data:", updateError);
-            } else {
-                setData({ ...tempData });
-                alert("Data updated successfully!");
+            if (error) {
+                console.error("Error checking existing data:", error);
+                return
             }
-        } else {
-            const { error: insertError } = await supabase
-                .from("call_durations")
-                .insert([{ email, data: tempData }]);
 
-            if (insertError) {
-                console.error("Error inserting data:", insertError);
+            if (existing) {
+                const confirmUpdate = confirm(
+                    `You already have saved data:\n${JSON.stringify(existing.data, null, 2)}\n\nDo you want to overwrite it?`
+                );
+                if (!confirmUpdate) {
+                    setShowEmailPrompt(false);
+                    return;
+                }
+
+                const { error: updateError } = await supabase
+                    .from("call_durations")
+                    .update({ data: tempData, updated_at: new Date() })
+                    .eq("email", email);
+
+                if (updateError) {
+                    console.error("Error updating data:", updateError);
+                } else {
+                    setData({ ...tempData });
+                    alert("Data updated successfully!");
+                }
             } else {
-                setData({ ...tempData });
-                alert("Data saved successfully!");
+                const { error: insertError } = await supabase
+                    .from("call_durations")
+                    .insert([{ email, data: tempData }]);
+
+                if (insertError) {
+                    console.error("Error inserting data:", insertError);
+                } else {
+                    setData({ ...tempData });
+                    alert("Data saved successfully!");
+                }
             }
+
+            setShowEmailPrompt(false);
+        } catch (error) {
+            console.log(`error occurred in handleSave: ${error}`)
         }
-
-        setShowEmailPrompt(false);
     };
 
     const options: Highcharts.Options = {
