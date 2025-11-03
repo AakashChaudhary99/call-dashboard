@@ -35,16 +35,16 @@ const CallDuration = () => {
                 return;
             }
 
-            const { data: existing, error } = await supabase
+            const { data: existing } = await supabase
                 .from("call_durations")
                 .select("data")
                 .eq("email", email)
                 .single();
 
-            if (error) {
-                console.error("Error checking existing data:", error);
-                return
-            }
+            // if (error) {
+            //     console.error("Error checking existing data:", error);
+            //     return
+            // }
 
             if (existing) {
                 const confirmUpdate = confirm(
